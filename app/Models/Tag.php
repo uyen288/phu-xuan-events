@@ -5,18 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Category extends Model
+class Tag extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
         'slug',
-        'description',
     ];
 
     public function events()
     {
-        return $this->hasMany(Event::class);
+        return $this->belongsToMany(
+            Event::class,
+            'event_tags'
+        );
     }
 }
