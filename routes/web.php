@@ -11,9 +11,9 @@ Route::get('/', function () {
 });
 
 // Trang dashboard mặc định của Laravel Breeze sau khi đăng nhập
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard');
 
 // Nhóm các Route yêu cầu bắt buộc phải ĐĂNG NHẬP (`auth`)
 Route::middleware('auth')->group(function () {
