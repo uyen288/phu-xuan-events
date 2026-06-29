@@ -21,8 +21,12 @@ class DashboardController extends Controller
         $pendingRegistrations = Registration::where('status', 'pending')->count();
         $confirmedRegistrations = Registration::where('status', 'confirmed')->count();
 
-        // Lấy danh sách sự kiện
-        $events = Event::all();
+        // ĐÃ SỬA: Thay Event::all() bằng truy vấn đếm số lượng đơn đã được duyệt (confirmed)
+        $events = Event::withCount([
+            'registrations' => function ($query) {
+                $query->where('status', 'confirmed');
+            }
+        ])->get();
 
         // ĐỒNG BỘ: Đổi tên biến từ $registrationsList thành $registrations để khớp với file dashboard.blade.php
         $registrations = Registration::with(['user', 'event'])->orderBy('created_at', 'desc')->get();
@@ -33,7 +37,7 @@ class DashboardController extends Controller
             'pendingRegistrations',
             'confirmedRegistrations',
             'events',
-            'registrations' // <-- Đổi chuẩn tên biến ở đây
+            'registrations'
         ));
     }
 

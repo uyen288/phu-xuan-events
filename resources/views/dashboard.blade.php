@@ -85,7 +85,7 @@
                                 <th class="ps-4" style="width: 80px;">ID</th>
                                 <th>Tên Sự Kiện</th>
                                 <th>Địa Điểm</th>
-                                <th>Sức Chứa</th>
+                                <th class="text-center">Đã Đăng Ký / Sức Chứa</th>
                                 <th>Trạng Thái</th>
                                 <th class="text-center" style="width: 200px;">Hành Động</th>
                             </tr>
@@ -100,7 +100,15 @@
                                             {{ \Carbon\Carbon::parse($event->start_time)->format('d/m/Y H:i') }}</span>
                                     </td>
                                     <td><i class="bi bi-geo-alt text-danger"></i> {{ $event->location }}</td>
-                                    <td><i class="bi bi-people text-muted"></i> {{ $event->capacity }}</td>
+
+                                    <td class="text-center">
+                                        <div class="d-inline-flex align-items-center justify-content-center">
+                                            <i class="bi bi-people text-muted me-1"></i>
+                                            <span class="fw-bold text-dark">{{ $event->registrations_count ?? 0 }}</span>
+                                            <span class="text-muted">/{{ $event->capacity }}</span>
+                                        </div>
+                                    </td>
+
                                     <td>
                                         @if($event->status == 'published')
                                             <span class="badge bg-success-subtle text-success border border-success-subtle">Đã xuất
