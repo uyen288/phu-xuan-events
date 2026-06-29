@@ -21,6 +21,11 @@ class Event extends Model
         'category_id',
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
+
     public function organizer()
     {
         return $this->belongsTo(User::class, 'user_id');
