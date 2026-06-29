@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 
 // Trang chủ hệ thống công khai
@@ -18,9 +19,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
 
     // 1. Quản lý hồ sơ cá nhân
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::singleton('profile', ProfileController::class)->creatable();
 
     // 2. PHÂN HỆ CỦA THÀNH VIÊN B: Thống kê & Xuất báo cáo
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -28,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/admin/registrations/{id}/approve', [DashboardController::class, 'approve'])->name('admin.registrations.approve');
     Route::patch('/admin/registrations/{id}/reject', [DashboardController::class, 'reject'])->name('admin.registrations.reject');
 
+    // Quản lý events chung
+    Route::resource('events', EventController::class);
 });
 
 require __DIR__ . '/auth.php';
