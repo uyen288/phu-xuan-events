@@ -1,7 +1,3 @@
-@extends('layouts.app')
-
-@section('title', 'Dashboard')
-
 @section('content')
     <div class="container-fluid px-4 py-4">
         <h2 class="mb-4 font-weight-bold text-dark">Tổng Quan Hệ Thống Báo Cáo - Thống Kê</h2>
