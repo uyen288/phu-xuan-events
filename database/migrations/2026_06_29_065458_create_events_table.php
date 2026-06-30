@@ -37,7 +37,7 @@ return new class extends Migration {
                 'cancelled',
                 'completed'
             ])->default('draft');
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

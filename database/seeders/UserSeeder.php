@@ -2,43 +2,41 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Tạo tài khoản siêu quản trị (Admin) - Quản lý user, phê duyệt đơn
+        // 1. Tạo tài khoản Admin cố định để test quyền tối cao
         User::create([
-            'name' => 'Admin Phu Xuan',
-            'email' => 'admin@pxu.edu.vn',
-            'password' => Hash::make('12345678'),
+            'name' => 'Quản Trị Viên',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('12345678'),
             'role' => 'admin',
+            'email_verified_at' => now(),
         ]);
 
-        // 2. Tạo tài khoản Người tổ chức (Organizer/Bán cán sự/Phòng ban) - Tạo sự kiện
+        // 2. Tạo tài khoản Organizer cố định để test giao diện quản lý sự kiện
         User::create([
-            'name' => 'Doan Thanh Nien PXU',
-            'email' => 'organizer@pxu.edu.vn',
-            'password' => Hash::make('12345678'),
+            'name' => 'Ban Tổ Chức Sự Kiện',
+            'email' => 'organizer@gmail.com',
+            'password' => bcrypt('12345678'),
             'role' => 'organizer',
+            'email_verified_at' => now(),
         ]);
 
-        // 3. Tạo một vài tài khoản Sinh viên (Student) để test đăng ký sự kiện
+        // 3. Tạo tài khoản Student cố định để test bấm nút Đăng ký tham gia
         User::create([
-            'name' => 'Le Van An',
-            'email' => 'student1@pxu.edu.vn',
-            'password' => Hash::make('12345678'),
+            'name' => 'Sinh Viên Phú Xuân',
+            'email' => 'student@gmail.com',
+            'password' => bcrypt('12345678'),
             'role' => 'student',
+            'email_verified_at' => now(),
         ]);
 
-        User::create([
-            'name' => 'Nguyen Thi Binh',
-            'email' => 'student2@pxu.edu.vn',
-            'password' => Hash::make('12345678'),
-            'role' => 'student',
-        ]);
+        // 4. Gọi Factory sinh thêm 30 tài khoản User ngẫu nhiên (gồm cả Student và Organizer)
+        User::factory()->count(30)->create();
     }
 }

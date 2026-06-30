@@ -2,42 +2,51 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use App\Models\User;
 use App\Models\Event;
+use App\Models\User;
+use App\Models\Registration;
+use Illuminate\Database\Seeder;
 
 class RegistrationSeeder extends Seeder
 {
     public function run(): void
     {
-        // Lấy danh sách Sinh viên và Sự kiện mẫu để làm dữ liệu kết nối
-        $student1 = User::where('email', 'student1@pxu.edu.vn')->first();
-        $student2 = User::where('email', 'student2@pxu.edu.vn')->first();
-        $event = Event::first();
+        // 1. Lấy danh sách tất cả các sự kiện hiện có
+        $events = Event::all();
 
-        if ($student1 && $event) {
-            // ĐÃ SỬA: Thay 'approved' bằng 'confirmed' để khớp 100% với file Migration của bạn
-            DB::table('registrations')->insert([
-                'user_id' => $student1->id,
-                'event_id' => $event->id,
-                'status' => 'confirmed', // Trạng thái đã phê duyệt/xác nhận tham gia
-                'note' => 'Sinh viên năm cuối khoa CNTT',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        // 2. Lấy danh sách tất cả User có vai trò là sinh viên (student)
+        $students = User::where('role', 'student')->get();
+
+        // Nếu hệ thống chưa có sự kiện hoặc chưa có sinh viên thì dừng lại để tránh lỗi
+        if ($events->isEmpty() || $students->isEmpty()) {
+            return;
         }
 
-        if ($student2 && $event) {
-            // Giữ nguyên 'pending' vì trong Migration của bạn đã có sẵn từ này
-            DB::table('registrations')->insert([
-                'user_id' => $student2->id,
-                'event_id' => $event->id,
-                'status' => 'pending', // Trạng thái chờ duyệt
-                'note' => 'Đăng ký tham gia câu lạc bộ',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        // 3. Duyệt qua từng sự kiện để tạo ngẫu nhiên đơn đăng ký
+        foreach ($events as $event) {
+            // Mỗi sự kiện sẽ có ngẫu nhiên từ 2 đến 7 sinh viên đăng ký tham gia
+            $numberOfRegistrations = rand(2, 7);
+
+            // Trộn ngẫu nhiên danh sách sinh viên và lấy ra số lượng cần thiết cho sự kiện này
+            $randomStudents = $students->random(min($numberOfRegistrations, $students->count()));
+
+            foreach ($randomStudents as $student) {
+                Registration::create([
+                    'event_id' => $event->id,
+                    'user_id' => $student->id,
+
+                    // ĐỒNG BỘ CHUẨN: Sử dụng bộ trạng thái phổ biến khớp tuyệt đối với DB của bạn
+                    'status' => fake()->randomElement(['pending', 'confirmed', 'cancelled']),
+
+                    'note' => fake()->randomElement([
+                        'Em đăng ký tham gia ạ.',
+                        'Mong muốn được học hỏi thêm kiến thức.',
+                        'Em đăng ký suất vé VIP.',
+                        null
+                    ]),
+                    'created_at' => fake()->dateTimeBetween('-1 week', 'now'),
+                ]);
+            }
         }
     }
 }

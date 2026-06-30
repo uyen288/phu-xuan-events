@@ -2,75 +2,44 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Event;
+use App\Models\User;
 
 class EventPolicy
 {
-    public function before(User $user, string $ability): bool|null
+    public function viewAny(?User $user): bool
     {
-        if ($user->isAdmin()) {
+        return true; // Tất cả mọi người (kể cả khách) đều xem được danh sách sự kiện công khai
+    }
+
+    public function view(?User $user, Event $event): bool
+    {
+        if ($event->status === 'published') {
             return true;
         }
-        return null;
-    }
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return true;
+        // Nếu là bản nháp (draft), chỉ Admin hoặc chính người tạo (Owner) mới được xem
+        return $user && ($user->role === 'admin' || $user->id === $event->user_id);
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Event $event): bool
-    {
-        return $event->status === 'published' || $user?->id === $event->user_id;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
     public function create(User $user): bool
     {
-        return true;
+        return $user->role === 'admin' || $user->role === 'organizer';
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $user, Event $event): bool
     {
-        if ($user->isEditor()) {
-            return true;
-        }
-        return $user->owns($event);
+        // Admin hoặc chính chủ sở hữu sự kiện mới được quyền sửa
+        return $user->role === 'admin' || $user->id === $event->user_id;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
     public function delete(User $user, Event $event): bool
     {
-        return $user->owns($event);
-        // return $user->id === $Event->user_id;
-    }
+        // Nếu là Admin thì được xóa thẳng. 
+        // Nếu là Organizer (Chính chủ), chỉ được xóa khi sự kiện đó CHƯA CÓ sinh viên nào đăng ký đơn tham gia
+        if ($user->role === 'admin') {
+            return true;
+        }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Event $event): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Event $event): bool
-    {
-        return false;
+        return $user->id === $event->user_id && $event->registrations()->count() === 0;
     }
 }

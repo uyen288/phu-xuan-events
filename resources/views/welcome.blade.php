@@ -8,6 +8,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <style>
@@ -40,19 +43,34 @@
     </style>
 </head>
 
-<body class="antialiased bg-gray-50 flex flex-col min-h-screen">
+<body class="antialiased bg-gray-50 flex flex-col min-h-screen m-0 p-0">
 
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
-            <div class="flex items-center">
+
+            <div class="flex items-center space-x-10">
                 <a href="/">
                     <img src="{{ asset('image/logo-pxu.png') }}" alt="PXU University Logo"
                         class="h-14 w-auto object-contain">
                 </a>
+
+                <ul class="hidden md:flex items-center space-x-8 font-medium list-none m-0 p-0">
+                    <li>
+                        <a href="/" class="text-red-700 font-bold text-decoration-none transition-colors duration-200">
+                            Trang Chủ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('events.index') }}"
+                            class="text-gray-600 hover:text-red-700 text-decoration-none transition-colors duration-200">
+                            Sự Kiện
+                        </a>
+                    </li>
+                </ul>
             </div>
 
             <div class="flex items-center space-x-6 text-gray-600 font-medium">
-                <button class="hover:text-red-700">
+                <button class="hover:text-red-700 bg-transparent border-0 p-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -61,13 +79,19 @@
 
                 @if (Route::has('login'))
                     @auth
-                        <a href="{{ route('events.index') }}" class="text-red-700 font-semibold hover:underline">Vào Hệ
-                            Thống</a>
+                        <a href="{{ route('events.index') }}"
+                            class="text-red-700 font-semibold text-decoration-none hover:underline">
+                            Vào Hệ Thống
+                        </a>
                     @else
-                        <a href="{{ route('login') }}" class="hover:text-red-700">Đăng nhập</a>
+                        <a href="{{ route('login') }}"
+                            class="text-gray-600 hover:text-red-700 text-decoration-none transition-colors duration-200">
+                            Đăng nhập
+                        </a>
 
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="hover:text-red-700">
+                            <a href="{{ route('register') }}"
+                                class="bg-red-700 text-white text-decoration-none px-4 py-2 rounded-lg hover:bg-red-800 transition-colors duration-200 shadow-sm">
                                 Đăng ký
                             </a>
                         @endif
@@ -78,7 +102,6 @@
     </header>
 
     <div class="flex-grow">
-
         <div class="w-full bg-white">
             <div class="swiper mySwiper w-full">
                 <div class="swiper-wrapper">
@@ -107,36 +130,7 @@
         </main>
     </div>
 
-    <footer class="py-12 w-full mt-auto"
-        style="background-color: #000000 !important; color: #ffffff !important; border-top: 1px solid #111827;">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-xl font-bold uppercase tracking-wide mb-2" style="color: #ffffff !important;">Hệ Thống Quản
-                Lý Sự Kiện Phu Xuan Events</h3>
-            <p class="text-sm mt-2" style="color: #9ca3af !important;">Phòng Công tác sinh viên - Trường Đại học Phú
-                Xuân</p>
-            <p class="text-xs mt-1" style="color: #6b7280 !important;">Địa chỉ: 176 Hai Bà Trưng, Phường Vĩnh Ninh,
-                Thành phố Huế</p>
-
-            <div class="flex justify-center gap-6 mt-6">
-                <a href="#" class="text-gray-400 hover:text-red-500 transition-colors">
-                    <span class="sr-only">Facebook</span>
-                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 12.991 22 12z">
-                        </path>
-                    </svg>
-                </a>
-                <a href="#" class="text-gray-400 hover:text-red-500 transition-colors">
-                    <span class="sr-only">Website</span>
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
-                        </path>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </footer>
+    @include('layouts.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
