@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -25,6 +24,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('location');
+
+            // THÊM: Cột lưu tên file ảnh banner sự kiện (để trống nếu chưa upload)
+            $table->string('banner')->nullable();
+
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->integer('capacity');
@@ -34,7 +37,7 @@ return new class extends Migration
                 'cancelled',
                 'completed'
             ])->default('draft');
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

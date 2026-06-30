@@ -21,11 +21,15 @@ class DashboardController extends Controller
         $pendingRegistrations = Registration::where('status', 'pending')->count();
         $confirmedRegistrations = Registration::where('status', 'confirmed')->count();
 
-        // Lấy danh sách sự kiện
-        $events = Event::all();
+        // ĐÃ SỬA: Thay Event::all() bằng truy vấn đếm số lượng đơn đã được duyệt (confirmed)
+        $events = Event::withCount([
+            'registrations' => function ($query) {
+                $query->where('status', 'confirmed');
+            }
+        ])->get();
 
-        // Lấy danh sách toàn bộ đơn đăng ký (Kèm user và event)
-        $registrationsList = Registration::with(['user', 'event'])->orderBy('created_at', 'desc')->get();
+        // ĐỒNG BỘ: Đổi tên biến từ $registrationsList thành $registrations để khớp với file dashboard.blade.php
+        $registrations = Registration::with(['user', 'event'])->orderBy('created_at', 'desc')->get();
 
         return view('dashboard', compact(
             'totalStudents',
@@ -33,7 +37,7 @@ class DashboardController extends Controller
             'pendingRegistrations',
             'confirmedRegistrations',
             'events',
-            'registrationsList'
+            'registrations'
         ));
     }
 
@@ -88,7 +92,7 @@ class DashboardController extends Controller
         $registration = Registration::findOrFail($id);
         $registration->status = 'confirmed';
         $registration->save();
-        
+
         return redirect()->back()->with('success', 'Đã duyệt đơn đăng ký thành công.');
     }
 
@@ -98,7 +102,38 @@ class DashboardController extends Controller
         $registration = Registration::findOrFail($id);
         $registration->status = 'cancelled';
         $registration->save();
-        
+
         return redirect()->back()->with('success', 'Đã từ chối đơn đăng ký.');
+    }
+
+    // BỔ SUNG: Chức năng xử lý khi Sinh viên bấm nút đăng ký tham gia sự kiện trực tiếp trên giao diện
+    public function registerEvent(Request $request, $eventId)
+    {
+        $userId = auth()->id(); // Lấy ID của sinh viên đang đăng nhập
+        $event = Event::with('registrations')->findOrFail($eventId);
+
+        // 1. KIỂM TRA: Sinh viên đã đăng ký sự kiện này chưa?
+        $alreadyRegistered = Registration::where('user_id', $userId)
+            ->where('event_id', $eventId)
+            ->exists();
+        if ($alreadyRegistered) {
+            return redirect()->back()->with('error', 'Bạn đã đăng ký tham gia sự kiện này từ trước rồi!');
+        }
+
+        // 2. KIỂM TRA: Sự kiện đã hết chỗ chưa?
+        $confirmedCount = $event->registrations()->where('status', 'confirmed')->count();
+        if ($confirmedCount >= $event->capacity) {
+            return redirect()->back()->with('error', 'Rất tiếc, sự kiện này đã đầy chỗ!');
+        }
+
+        // 3. THỎA MÃN ĐIỀU KIỆN -> Tiến hành tạo đơn đăng ký mới ở trạng thái chờ duyệt (pending)
+        Registration::create([
+            'user_id' => $userId,
+            'event_id' => $eventId,
+            'status' => 'pending',
+            'note' => $request->input('note'), // Lưu ghi chú từ form (nếu có)
+        ]);
+
+        return redirect()->back()->with('success', 'Đăng ký tham gia thành công! Vui lòng chờ Ban tổ chức phê duyệt.');
     }
 }
