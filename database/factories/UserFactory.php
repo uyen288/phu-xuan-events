@@ -30,7 +30,12 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= bcrypt('12345678'),
             'remember_token' => Str::random(10),
-            'role' => fake()->randomElement(['student', 'organizer', 'admin']),
+            'role' => fake()->randomElement([
+                'student',
+                'student',
+                'student',
+                'organizer',
+            ]),
         ];
     }
 

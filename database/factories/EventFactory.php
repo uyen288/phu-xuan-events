@@ -2,10 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Event;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<Event>
+ */
 class EventFactory extends Factory
 {
     /**
@@ -13,22 +17,25 @@ class EventFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array // <-- SỬA CHỖ NÀY THÀNH : array
+    public function definition(): array
     {
-        $startTime = fake()->dateTimeBetween('now', '+2 months');
-        $endTime = max($startTime, fake()->dateTimeInInterval($startTime, '+5 hours'));
+        $start = fake()->dateTimeBetween('+1 day', '+1 month');
+        $end = (clone $start)->modify('+3 hours');
 
         return [
-            'user_id' => User::where('role', 'organizer')->inRandomOrder()->first()?->id ?? User::factory(),
-            'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
-            'title' => fake()->sentence(6),
-            'description' => fake()->paragraph(5),
-            'location' => fake()->streetAddress() . ', Campus Phu Xuan',
-            'banner' => null,
-            'start_time' => $startTime,
-            'end_time' => $endTime,
-            'capacity' => fake()->randomElement([30, 50, 100, 200, 500]),
-            'status' => fake()->randomElement(['draft', 'published']),
+            'title' => fake()->sentence(4),
+            'description' => fake()->paragraph(),
+            'location' => fake()->city(),
+            'start_time' => $start,
+            'end_time' => $end,
+            'capacity' => fake()->numberBetween(30, 200),
+            'status' => fake()->randomElement([
+                'draft',
+                'published',
+                'completed'
+            ]),
+            'user_id' => User::where('role', 'organizer')->inRandomOrder()->value('id'),
+            'category_id' => Category::inRandomOrder()->value('id'),
         ];
     }
 }
