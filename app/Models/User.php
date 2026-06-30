@@ -7,11 +7,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -48,20 +49,45 @@ class User extends Authenticatable
         ];
     }
 
-    public function events() {
+    // ---------------------------------------------------------------
+    // Relationships
+    // ---------------------------------------------------------------
+
+    public function events(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
         return $this->hasMany(Event::class);
     }
 
-    public function registrations() {
+    public function registrations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
         return $this->hasMany(Registration::class);
     }
 
-    public function registeredEvents()
+    public function registeredEvents(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
             Event::class,
             'registrations'
         )->withPivot('status', 'note')
          ->withTimestamps();
+    }
+
+    // ---------------------------------------------------------------
+    // Role Helpers (AGENT.md yêu cầu — tránh hardcode ở nhiều nơi)
+    // ---------------------------------------------------------------
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOrganizer(): bool
+    {
+        return $this->role === 'organizer';
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->role === 'student';
     }
 }

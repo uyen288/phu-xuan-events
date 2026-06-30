@@ -23,7 +23,7 @@
                     </li>
 
                     @auth
-                        @if(auth()->user()->role === 'organizer' || auth()->user()->role === 'admin')
+                        @if(auth()->user()->isOrganizer() || auth()->user()->isAdmin())
                             <li>
                                 <a href="{{ route('events.create') }}"
                                     class="{{ request()->routeIs('events.create') ? 'text-red-700 font-bold' : 'text-gray-600 hover:text-red-700' }} transition-colors duration-200">
@@ -32,15 +32,31 @@
                             </li>
                         @endif
 
-                        @if(auth()->user()->role === 'admin')
+                        @if(auth()->user()->isStudent())
+                            <li>
+                                <a href="{{ route('my-events') }}"
+                                    class="{{ request()->routeIs('my-events') ? 'text-red-700 font-bold' : 'text-gray-600 hover:text-red-700' }} transition-colors duration-200">
+                                    Sự Kiện Của Tôi
+                                </a>
+                            </li>
+                        @endif
+
+                        @if(auth()->user()->isAdmin())
                             <li>
                                 <a href="{{ route('dashboard') }}"
                                     class="{{ request()->routeIs('dashboard') ? 'text-red-700 font-bold' : 'text-gray-600 hover:text-red-700' }} transition-colors duration-200">
                                     Quản Trị
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ route('admin.users.index') }}"
+                                    class="{{ request()->routeIs('admin.users.*') ? 'text-red-700 font-bold' : 'text-gray-600 hover:text-red-700' }} transition-colors duration-200">
+                                    Quản Lý Users
+                                </a>
+                            </li>
                         @endif
                     @endauth
+
                 </ul>
             </div>
 
