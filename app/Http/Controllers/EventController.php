@@ -37,7 +37,21 @@ class EventController extends Controller
             });
         }
 
-        $events = $query->orderBy('start_time', 'asc')->paginate(12);
+        // Lọc theo tag
+        if ($request->filled('tag')) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('tags.id', $request->tag);
+            });
+        }
+
+        // Lọc theo ngày (hiển thị sự kiện diễn ra trong ngày được chọn)
+        if ($request->filled('date')) {
+            $date = $request->date;
+            $query->whereDate('start_time', '<=', $date)
+                  ->whereDate('end_time', '>=', $date);
+        }
+
+        $events = $query->orderBy('start_time', 'asc')->paginate(12)->withQueryString();
         $categories = Category::all();
 
         return view('events.index', compact('events', 'categories'));
