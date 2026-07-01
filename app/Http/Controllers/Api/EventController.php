@@ -73,4 +73,14 @@ class EventController extends Controller
             'data'    => new EventResource($event),
         ]);
     }
+
+    public function store(Request $request, Event $event)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'POST thành công',
+            'event' => $event,
+            'request' => $request->all(),
+        ]);
+    }
 }
