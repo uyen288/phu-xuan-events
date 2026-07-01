@@ -33,7 +33,7 @@
         <div class="card border-0 shadow-sm rounded-3 mb-5 bg-light">
             <div class="card-body p-3">
                 <form action="{{ route('events.index') }}" method="GET" class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0 text-muted"><i
                                     class="bi bi-search"></i></span>
@@ -41,7 +41,15 @@
                                 placeholder="Tìm tên sự kiện hoặc địa điểm..." value="{{ request('search') }}">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i
+                                    class="bi bi-calendar-date"></i></span>
+                            <input type="date" name="date" class="form-control border-start-0"
+                                value="{{ request('date') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <select name="category" class="form-select">
                             <option value="">-- Tất cả danh mục --</option>
                             @foreach($categories as $cat)
@@ -66,13 +74,18 @@
                     <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden position-relative home-card">
                         <div class="position-relative" style="height: 180px; bg-secondary">
                             @if($event->banner)
-                                <img src="{{ asset('storage/' . $event->banner) }}" class="w-100 h-100 object-fit-cover"
-                                    alt="{{ $event->title }}">
+                                @if(str_starts_with($event->banner, 'image/'))
+                                    <img src="{{ asset($event->banner) }}" class="w-100 h-100 object-fit-cover"
+                                        alt="{{ $event->title }}"
+                                        onerror="this.onerror=null; this.src='{{ asset('image/slider1.jpg') }}';">
+                                @else
+                                    <img src="{{ asset('storage/' . $event->banner) }}" class="w-100 h-100 object-fit-cover"
+                                        alt="{{ $event->title }}"
+                                        onerror="this.onerror=null; this.src='{{ asset('image/slider1.jpg') }}';">
+                                @endif
                             @else
-                                <div
-                                    class="w-100 h-100 bg-secondary-subtle d-flex align-items-center justify-content-center text-muted">
-                                    <i class="bi bi-calendar3 fs-1"></i>
-                                </div>
+                                <img src="{{ asset('image/slider1.jpg') }}" class="w-100 h-100 object-fit-cover"
+                                    alt="PXU Event Mặc định">
                             @endif
                             <span class="position-absolute top-0 end-0 m-3 badge bg-primary px-2 py-1.5 rounded-2 shadow-sm">
                                 {{ $event->category->name ?? 'Sự kiện' }}
@@ -104,10 +117,11 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-3 d-flex flex-wrap gap-1">
                                 @foreach($event->tags as $tag)
-                                    <span class="badge bg-light text-secondary border me-1 small"><i
-                                            class="bi bi-tag-fill me-1 text-muted"></i>{{ $tag->name }}</span>
+                                    <a href="{{ route('events.index', ['tag' => $tag->id]) }}" class="badge bg-light text-secondary border text-decoration-none small hover-shadow transition">
+                                        <i class="bi bi-tag-fill me-1 text-muted"></i>{{ $tag->name }}
+                                    </a>
                                 @endforeach
                             </div>
                         </div>
