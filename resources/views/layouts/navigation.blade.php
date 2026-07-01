@@ -83,7 +83,7 @@
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-red-700 transition-colors duration-200">
+                    <a href="{{ route('login') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition-colors duration-200 shadow-sm">
                         Đăng nhập
                     </a>
                     @if (Route::has('register'))

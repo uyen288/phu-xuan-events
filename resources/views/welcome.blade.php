@@ -85,7 +85,7 @@
                         </a>
                     @else
                         <a href="{{ route('login') }}"
-                            class="text-gray-600 hover:text-red-700 text-decoration-none transition-colors duration-200">
+                            class="bg-red-700 text-white text-decoration-none px-4 py-2 rounded-lg hover:bg-red-800 transition-colors duration-200 shadow-sm">
                             Đăng nhập
                         </a>
 

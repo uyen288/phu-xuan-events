@@ -27,7 +27,7 @@
     {{-- Banner --}}
     @if($event->banner)
         <img src="{{ asset('storage/' . $event->banner) }}"
-             alt="{{ $event->title }}"
+             alt="{{ $event->banner }}"
              class="w-full h-64 md:h-96 object-cover rounded-xl mb-8 shadow">
     @else
         <div class="w-full h-64 bg-gray-200 rounded-xl mb-8 flex items-center justify-content-center text-gray-400 text-5xl">
