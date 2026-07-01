@@ -27,7 +27,7 @@ class EventController extends Controller
 
         // Lọc theo tag (ID)
         if ($request->filled('tag_id')) {
-            $query->whereHas('tags', fn ($q) => $q->where('tags.id', $request->tag_id));
+            $query->whereHas('tags', fn($q) => $q->where('tags.id', $request->tag_id));
         }
 
         // Tìm kiếm LIKE (M2.6)
@@ -35,7 +35,7 @@ class EventController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('location', 'LIKE', "%{$search}%");
+                    ->orWhere('location', 'LIKE', "%{$search}%");
             });
         }
 
@@ -71,6 +71,16 @@ class EventController extends Controller
         return response()->json([
             'success' => true,
             'data'    => new EventResource($event),
+        ]);
+    }
+
+    public function store(Request $request, Event $event)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'POST thành công',
+            'event' => $event,
+            'request' => $request->all(),
         ]);
     }
 }
