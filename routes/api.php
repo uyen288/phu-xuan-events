@@ -42,3 +42,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // M4.5: Xem danh sách đăng ký của tôi
     Route::get('/user/registrations', [RegistrationController::class, 'index']);
 });
+
+Route::prefix('v1')->group(function () {
+    Route::get('/events', [EventController::class, 'index']);
+    Route::get('/events/{event}', [EventController::class, 'show']);
+
+    Route::post('/events/{event}', [EventController::class, 'store']);
+});
