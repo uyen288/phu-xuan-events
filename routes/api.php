@@ -49,17 +49,3 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/events/{event}', [EventController::class, 'store']);
 });
-
-Route::prefix('v1')->group(function () {
-    Route::get('/events', [EventController::class, 'index']);
-    Route::get('/events/{event}', [EventController::class, 'show']);
-
-    Route::post('/events/{event}', [EventController::class, 'store']);
-});
-
-Route::prefix('v1')->group(function () {
-    Route::get('/events', [EventController::class, 'index']);
-    Route::get('/events/{event}', [EventController::class, 'show']);
-
-    Route::post('/events/{event}', [EventController::class, 'store']);
-});
